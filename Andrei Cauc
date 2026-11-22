@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeSpace — Global Anonymous Support Community</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        bgCream: '#FAF8F5',
+                        sage: {
+                            50: '#F4F7F5',
+                            100: '#E4EBE6',
+                            200: '#C5D6CC',
+                            500: '#4A6B5D',
+                            600: '#3A574A',
+                            700: '#2C443A',
+                            800: '#1F332B',
+                            900: '#14221C',
+                        },
+                        slateText: '#2C302E',
+                        mutedText: '#626865'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #FAF8F5;
+            color: #2C302E;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .blur-preview {
+            filter: blur(6px);
+            user-select: none;
+            pointer-events: none;
+        }
+        /* Custom scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #FAF8F5;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94A3B8;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="min-h-full flex flex-col antialiased">
+
+    <!-- 1. TOP GLOBAL EMERGENCY BANNER -->
+    <div class="bg-sage-900 text-white text-xs sm:text-sm py-2.5 px-4 shadow-inner">
+        <div class="max-w-6xl mx-auto flex flex-wrap justify-between items-center gap-2">
+            <div class="flex items-center gap-2">
+                <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span class="font-medium">In immediate danger or crisis? Confidential help is available worldwide 24/7.</span>
+            </div>
+            <button onclick="openHelplineModal()" class="underline hover:text-sage-100 font-semibold transition flex items-center gap-1.5">
+                <i class="fa-solid fa-earth-americas"></i> View Global Crisis Helplines
+            </button>
+        </div>
+    </div>
+
+    <!-- 2. MAIN HEADER & NAVIGATION -->
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 py-3 sm:py-4 flex flex-wrap items-center justify-between gap-3">
+            <!-- Brand Logo -->
+            <a href="#" onclick="switchTab('feed'); return false;" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-xl bg-sage-100 text-sage-600 flex items-center justify-center font-bold text-xl group-hover:bg-sage-600 group-hover:text-white transition-all shadow-sm">
+                    <i class="fa-solid fa-hand-holding-heart"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xl font-bold tracking-tight text-sage-800 leading-none">SafeSpace</span>
+                        <span class="text-[10px] uppercase tracking-wider font-bold bg-sage-50 text-sage-700 px-2 py-0.5 rounded-full border border-sage-200">Global</span>
+                    </div>
+                    <span class="text-xs text-mutedText font-medium">A judgment-free sanctuary for every voice</span>
+                </div>
+            </a>
+
+            <!-- Navigation Links -->
+            <nav class="hidden md:flex items-center gap-6 text-sm font-semibold text-gray-600">
+                <button onclick="switchTab('feed')" id="navTab-feed" class="hover:text-sage-700 transition pb-1 border-b-2 border-sage-600 text-sage-800">
+                    <i class="fa-solid fa-stream mr-1.5 text-xs"></i> Stories Feed
+                </button>
+                <button onclick="switchTab('rules')" id="navTab-rules" class="hover:text-sage-700 transition pb-1 border-b-2 border-transparent">
+                    <i class="fa-solid fa-shield-cat mr-1.5 text-xs"></i> Community Rules
+                </button>
+                <button onclick="openHelplineModal()" class="hover:text-sage-700 transition pb-1">
+                    <i class="fa-solid fa-life-ring mr-1.5 text-xs"></i> Crisis Helplines
+                </button>
+            </nav>
+
+            <!-- User Status & Quick Testing Switcher -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <!-- Status Badge -->
+                <div id="statusBadgeContainer">
+                    <!-- Dynamic rendering -->
+                </div>
+
+                <!-- Admin/Testing Mode Toggle -->
+                <button onclick="toggleUserRole()" title="Switch between Visitor and Lifetime Member view for testing" 
+                    class="flex items-center gap-1.5 text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-xl font-medium transition border border-gray-200">
+                    <i class="fa-solid fa-arrows-rotate text-sage-600"></i>
+                    <span id="toggleRoleBtnText" class="hidden sm:inline">Test Visitor/Member</span>
+                </button>
+
+                <!-- Post Story Button -->
+                <button onclick="handleCreateStoryClick()" class="bg-sage-600 hover:bg-sage-700 text-white px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold shadow-sm hover:shadow transition flex items-center gap-2">
+                    <i class="fa-solid fa-pen-nib"></i>
+                    <span>Share Story</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 3. HERO & VALUE PROPOSITION -->
+    <section class="bg-gradient-to-b from-sage-50/80 via-bgCream to-bgCream border-b border-sage-100 py-8 sm:py-12 px-4">
+        <div class="max-w-4xl mx-auto text-center space-y-4">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white text-sage-800 border border-sage-200 shadow-sm">
+                <i class="fa-solid fa-lock text-sage-600"></i> 100% Anonymous & Compassionately Moderated
+            </div>
+            <h1 class="text-3xl sm:text-5xl font-extrabold text-gray-900 tracking-tight leading-tight">
+                One euro. Zero noise. A safe place to be heard.
+            </h1>
+            <p class="text-gray-600 text-sm sm:text-lg max-w-2xl mx-auto leading-relaxed">
+                Whether you're enduring silent struggles, recovering from abuse, or facing life's daily pressures—you don't have to carry it alone. Speak freely and connect with genuine human empathy.
+            </p>
+
+            <!-- Visitor Callout Card (Visible when Visitor) -->
+            <div id="heroVisitorCallout" class="mt-6 bg-white p-5 sm:p-6 rounded-2xl border border-sage-200 shadow-sm max-w-2xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-5 text-left">
+                <div class="space-y-1.5">
+                    <div class="flex items-center gap-2 text-sage-800 font-bold text-base">
+                        <i class="fa-solid fa-ticket text-sage-600"></i> Lifetime Access — €1.00 (One-Time Payment)
+                    </div>
+                    <p class="text-xs text-gray-600 leading-relaxed">
+                        Why €1? This tiny entry barrier permanently eliminates bots, spam, trolls, and advertisers, ensuring a quiet, respectful sanctuary. Pay once, belong forever.
+                    </p>
+                </div>
+                <button onclick="openPaymentModal()" class="w-full sm:w-auto shrink-0 bg-sage-600 hover:bg-sage-700 text-white font-bold text-sm px-6 py-3 rounded-xl shadow transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-unlock"></i> Unlock Access (€1)
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. MAIN CONTAINER (STORIES FEED / COMMUNITY RULES) -->
+    <main class="max-w-6xl mx-auto px-4 py-6 sm:py-8 flex-1 w-full">
+        
+        <!-- FEED VIEW -->
+        <div id="view-feed" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- LEFT & CENTER: FEED CONTENT -->
+            <div class="lg:col-span-2 space-y-6">
+
+                <!-- Search & Category Filters -->
+                <div class="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm space-y-3">
+                    <!-- Search Bar -->
+                    <div class="relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                        <input type="text" id="searchInput" oninput="renderStories()" placeholder="Search stories, topics, or keywords..." 
+                            class="w-full pl-10 pr-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-sage-500 transition">
+                    </div>
+
+                    <!-- Filter Pills -->
+                    <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs font-semibold no-scrollbar">
+                        <button onclick="filterCategory('all')" id="catBtn-all" class="cat-btn bg-sage-600 text-white px-4 py-2 rounded-xl shrink-0 transition">
+                            All Stories
+                        </button>
+                        <button onclick="filterCategory('Everyday Struggles')" id="catBtn-Everyday Struggles" class="cat-btn bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded-xl shrink-0 transition">
+                            🌧️ Everyday Struggles
+                        </button>
+                        <button onclick="filterCategory('Abuse & Trauma')" id="catBtn-Abuse & Trauma" class="cat-btn bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded-xl shrink-0 transition">
+                            💔 Abuse & Trauma
+                        </button>
+                        <button onclick="filterCategory('Healing & Advice')" id="catBtn-Healing & Advice" class="cat-btn bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded-xl shrink-0 transition">
+                            🌱 Healing & Advice
+                        </button>
+                        <button onclick="filterCategory('Relationships & Family')" id="catBtn-Relationships & Family" class="cat-btn bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded-xl shrink-0 transition">
+                            🏠 Relationships & Family
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Feed Container -->
+                <div id="storiesFeedContainer" class="space-y-5">
+                    <!-- Stories injected via JavaScript -->
+                </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN: SIDEBAR -->
+            <aside class="space-y-6">
+                
+                <!-- Membership Card -->
+                <div id="sidebarMembershipCard" class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm space-y-3">
+                    <!-- Injected dynamically -->
+                </div>
+
+                <!-- Urgent Crisis Info Card -->
+                <div class="bg-gradient-to-br from-white to-rose-50/50 p-5 rounded-2xl border border-rose-100 shadow-sm space-y-4">
+                    <div class="flex items-center gap-2.5 text-rose-800 font-bold text-base">
+                        <div class="w-8 h-8 rounded-xl bg-rose-100 flex items-center justify-center text-rose-600 shrink-0">
+                            <i class="fa-solid fa-phone-volume"></i>
+                        </div>
+                        <h3>Global Crisis Support</h3>
+                    </div>
+                    <p class="text-xs text-gray-600 leading-relaxed">
+                        If you are feeling overwhelmed or in immediate danger, free and confidential support is available 24/7 globally:
+                    </p>
+                    <div class="space-y-2 text-xs">
+                        <a href="https://findahelpline.com" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-3 bg-white rounded-xl border border-rose-100 hover:border-rose-300 transition group font-medium">
+                            <div>
+                                <div class="font-bold text-gray-800">Find A Helpline</div>
+                                <div class="text-[11px] text-gray-500">Global Directory (Free 24/7)</div>
+                            </div>
+                            <span class="text-rose-600 font-bold group-hover:underline text-[11px]">Browse →</span>
+                        </a>
+                        <a href="tel:988" class="flex items-center justify-between p-3 bg-white rounded-xl border border-rose-100 hover:border-rose-300 transition group font-medium">
+                            <div>
+                                <div class="font-bold text-gray-800">988 Suicide & Crisis Lifeline</div>
+                                <div class="text-[11px] text-gray-500">US & Canada • Call or Text</div>
+                            </div>
+                            <span class="text-rose-600 font-bold">Call 988</span>
+                        </a>
+                    </div>
+                    <button onclick="openHelplineModal()" class="w-full text-center text-xs text-sage-700 font-bold hover:underline pt-1">
+                        View full international crisis directory →
+                    </button>
+                </div>
+
+                <!-- Core Guidelines Card -->
+                <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm space-y-3">
+                    <div class="flex items-center gap-2 text-sage-800 font-bold text-sm">
+                        <i class="fa-solid fa-scale-balanced text-sage-600"></i>
+                        <h3>Community Pillars</h3>
+                    </div>
+                    <ul class="text-xs text-gray-600 space-y-2.5 leading-relaxed">
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-heart text-sage-600 mt-0.5"></i>
+                            <span><strong>Zero Judgment:</strong> Respond with kindness. Never blame victims or invalidate feelings.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-user-shield text-sage-600 mt-0.5"></i>
+                            <span><strong>Protect Anonymity:</strong> Do not share personal identities, real names, addresses, or contact info.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-hand-holding-medical text-sage-600 mt-0.5"></i>
+                            <span><strong>Peer Support:</strong> We offer shared experience and empathy, not formal medical advice.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Footer info -->
+                <div class="text-center text-xs text-gray-400 space-y-1">
+                    <p>SafeSpace Global © 2026</p>
+                    <p class="text-[11px]">Empathetic, ad-free & quiet since day one.</p>
+                </div>
+
+            </aside>
+
+        </div>
+
+        <!-- COMMUNITY RULES VIEW -->
+        <div id="view-rules" class="hidden max-w-4xl mx-auto space-y-6">
+            <div class="bg-white p-6 sm:p-8 rounded-3xl border border-gray-200 shadow-sm space-y-6">
+                <div class="border-b border-gray-100 pb-5">
+                    <span class="text-xs font-bold uppercase tracking-wider text-sage-600">Our Pledge</span>
+                    <h2 class="text-2xl font-extrabold text-gray-900 mt-1">Community Guidelines & Code of Conduct</h2>
+                    <p class="text-sm text-gray-600 mt-1">SafeSpace exists to be a refuge. Every member agrees to honor these core principles.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="p-5 bg-sage-50/50 rounded-2xl border border-sage-100 space-y-2">
+                        <div class="flex items-center gap-2 text-sage-800 font-bold text-base">
+                            <i class="fa-solid fa-shield-halved text-sage-600"></i> 1. Strict Anonymity
+                        </div>
+                        <p class="text-xs text-gray-600 leading-relaxed">
+                            Never request or post personally identifiable information (real names, employers, social handles, or locations) about yourself or anyone else involved in a story.
+                        </p>
+                    </div>
+
+                    <div class="p-5 bg-sage-50/50 rounded-2xl border border-sage-100 space-y-2">
+                        <div class="flex items-center gap-2 text-sage-800 font-bold text-base">
+                            <i class="fa-solid fa-ban text-rose-500"></i> 2. No Victim Blaming or Hate Speech
+                        </div>
+                        <p class="text-xs text-gray-600 leading-relaxed">
+                            Cruelty, judgment, discrimination, harassment, or invalidation of someone's lived experience results in immediate removal and permanent revocation of access.
+                        </p>
+                    </div>
+
+                    <div class="p-5 bg-sage-50/50 rounded-2xl border border-sage-100 space-y-2">
+                        <div class="flex items-center gap-2 text-sage-800 font-bold text-base">
+                            <i class="fa-solid fa-eye-slash text-amber-600"></i> 3. Trigger Warning Labels
+                        </div>
+                        <p class="text-xs text-gray-600 leading-relaxed">
+                            When writing stories that involve explicit abuse, self-harm, or severe trauma, members must check the "Content Warning" option to allow others to prepare emotionally before reading.
+                        </p>
+                    </div>
+
+                    <div class="p-5 bg-sage-50/50 rounded-2xl border border-sage-100 space-y-2">
+                        <div class="flex items-center gap-2 text-sage-800 font-bold text-base">
+                            <i class="fa-solid fa-comments text-sage-600"></i> 4. Supportive Conversations
+                        </div>
+                        <p class="text-xs text-gray-600 leading-relaxed">
+                            When commenting, ask yourself: "Does this reply build up, offer solace, or validate?" Constructive peer warmth is our highest priority.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="pt-4 text-center">
+                    <button onclick="switchTab('feed')" class="bg-sage-600 hover:bg-sage-700 text-white font-bold text-sm px-6 py-2.5 rounded-xl transition">
+                        Return to Stories Feed
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ==================== MODALS ==================== -->
+
+    <!-- 1. REALISTIC €1 CHECKOUT MODAL -->
+    <div id="paymentModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden border border-gray-100 animate-in fade-in zoom-in duration-200">
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-sage-800 to-sage-700 text-white p-6 relative">
+                <button onclick="closePaymentModal()" class="absolute top-4 right-4 text-white/80 hover:text-white text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 text-white text-xs font-semibold mb-2">
+                    <i class="fa-solid fa-shield-halved"></i> Secure One-Time Checkout
+                </div>
+                <h3 class="text-xl font-bold">Unlock SafeSpace Lifetime Access</h3>
+                <p class="text-xs text-sage-100 mt-1">Pay once, belong forever. No subscriptions, no ads.</p>
+            </div>
+
+            <!-- Body -->
+            <div class="p-6 space-y-5">
+                <!-- Summary -->
+                <div class="bg-sage-50 border border-sage-200 rounded-2xl p-4 flex items-center justify-between">
+                    <div>
+                        <div class="font-bold text-gray-800 text-sm">SafeSpace Lifetime Pass</div>
+                        <div class="text-xs text-gray-500">Unlocks reading, posting & commenting</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-2xl font-extrabold text-sage-700">€1.00</div>
+                        <div class="text-[10px] uppercase font-bold text-gray-400">One-time fee</div>
+                    </div>
+                </div>
+
+                <!-- Form -->
+                <form id="paymentForm" onsubmit="processPayment(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Your Email (for receipt & access recovery)</label>
+                        <input type="email" required placeholder="you@example.com" 
+                            class="w-full text-xs p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sage-500 focus:outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1.5">Payment Method</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <label class="border border-sage-500 bg-sage-50/50 rounded-xl p-2.5 flex items-center gap-2 cursor-pointer text-xs font-medium text-gray-800">
+                                <input type="radio" name="payMethod" checked class="accent-sage-600">
+                                <i class="fa-solid fa-credit-card text-sage-700"></i> Card
+                            </label>
+                            <label class="border border-gray-200 hover:bg-gray-50 rounded-xl p-2.5 flex items-center gap-2 cursor-pointer text-xs font-medium text-gray-700">
+                                <input type="radio" name="payMethod" class="accent-sage-600">
+                                <i class="fa-brands fa-apple text-gray-800"></i> Apple Pay
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Card details simulation -->
+                    <div class="space-y-2.5">
+                        <div>
+                            <label class="block text-[11px] font-semibold text-gray-500 mb-1">Cardholder Name (Simulated)</label>
+                            <input type="text" placeholder="Alex Morgan" required 
+                                class="w-full text-xs p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sage-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-gray-500 mb-1">Card Number</label>
+                            <div class="relative">
+                                <input type="text" placeholder="4242 •••• •••• 4242" required maxlength="19"
+                                    class="w-full text-xs p-2.5 pr-8 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sage-500 focus:outline-none">
+                                <i class="fa-solid fa-lock absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-[11px] font-semibold text-gray-500 mb-1">Expiry Date</label>
+                                <input type="text" placeholder="MM/YY" required maxlength="5"
+                                    class="w-full text-xs p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sage-500 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-gray-500 mb-1">CVC / CVV</label>
+                                <input type="password" placeholder="•••" required maxlength="4"
+                                    class="w-full text-xs p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sage-500 focus:outline-none">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-[11px] text-gray-400 text-center leading-normal">
+                        Simulated checkout demo. Completing activates instant member privileges.
+                    </div>
+
+                    <button type="submit" id="paySubmitBtn" class="w-full bg-sage-600 hover:bg-sage-700 text-white font-bold py-3 rounded-xl shadow-lg transition flex items-center justify-center gap-2 text-sm">
+                        <span>Pay €1.00 & Unlock Lifetime Membership</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. CREATE STORY MODAL -->
+    <div id="createStoryModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden border border-gray-100 max-h-[90vh] flex flex-col">
+            <!-- Header -->
+            <div class="bg-sage-800 text-white p-5 flex items-center justify-between shrink-0">
+                <div class="flex items-center gap-2 font-bold text-lg">
+                    <i class="fa-solid fa-feather-pointed"></i> Share Your Story
+                </div>
+                <button onclick="closeCreateStoryModal()" class="text-white/80 hover:text-white text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Form -->
+            <form id="storyForm" onsubmit="handleStorySubmit(event)" class="p-6 space-y-4 overflow-y-auto flex-1">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Title or Brief Summary</label>
+                    <input type="text" id="storyTitle" required placeholder="e.g., Feeling overwhelmed by expectations at work..." 
+                        class="w-full text-sm p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sage-500 focus:outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Category</label>
+                    <select id="storyCategory" class="w-full text-sm p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sage-500 focus:outline-none bg-white">
+                        <option value="Everyday Struggles">🌧️ Everyday Struggles</option>
+                        <option value="Abuse & Trauma">💔 Abuse & Trauma</option>
+                        <option value="Healing & Advice">🌱 Healing & Advice</option>
+                        <option value="Relationships & Family">🏠 Relationships & Family</option>
+                    </select>
+                </div>
+
+                <!-- Author Identity Selection -->
+                <div class="space-y-2 pt-1">
+                    <label class="block text-xs font-semibold text-gray-700">Display Identity</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <label class="border border-sage-400 bg-sage-50 rounded-xl p-2.5 flex items-center gap-2 cursor-pointer text-xs font-medium">
+                            <input type="radio" name="authorOption" value="anon" checked onchange="toggleAuthorInput()" class="accent-sage-600">
+                            Fully Anonymous (e.g., Anonymous #492)
+                        </label>
+                        <label class="border border-gray-200 rounded-xl p-2.5 flex items-center gap-2 cursor-pointer text-xs font-medium">
+                            <input type="radio" name="authorOption" value="pseudonym" onchange="toggleAuthorInput()" class="accent-sage-600">
+                            Use Custom Pseudonym
+                        </label>
+                    </div>
+                    <div id="pseudonymInputContainer" class="hidden mt-2">
+                        <input type="text" id="storyPseudonym" placeholder="Enter your alias (e.g. QuietHope)" 
+                            class="w-full text-xs p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sage-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <!-- Trigger Warning Checkbox -->
+                <div class="bg-amber-50 border border-amber-200 p-3.5 rounded-xl flex items-start gap-2 text-xs text-amber-900">
+                    <input type="checkbox" id="storyTW" class="mt-0.5 accent-amber-600 rounded">
+                    <div>
+                        <span class="font-bold">Content Warning (Trigger Warning)</span>
+                        <p class="text-[11px] text-amber-800 leading-normal">
+                            Check this box if your story contains graphic details of abuse, violence, or trauma so readers can choose when to unblur it.
+                        </p>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Your Story</label>
+                    <textarea id="storyContent" required rows="5" placeholder="Write openly. You are safe here and surrounded by caring people..." 
+                        class="w-full text-sm p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sage-500 focus:outline-none leading-relaxed"></textarea>
+                </div>
+
+                <div class="pt-2 flex justify-end gap-2">
+                    <button type="button" onclick="closeCreateStoryModal()" class="px-4 py-2.5 text-xs font-semibold text-gray-600 hover:bg-gray-100 rounded-xl">Cancel</button>
+                    <button type="submit" class="px-5 py-2.5 bg-sage-600 hover:bg-sage-700 text-white text-xs font-bold rounded-xl shadow transition">Publish Anonymously</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 3. REPORT MODAL -->
+    <div id="reportModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl p-6 space-y-4 border border-gray-100">
+            <div class="flex items-center gap-2 text-rose-600 font-bold text-base">
+                <i class="fa-solid fa-flag"></i> Report Post
+            </div>
+            <p class="text-xs text-gray-600">
+                Help us keep SafeSpace supportive and secure. Why are you reporting this post?
+            </p>
+            <div class="space-y-2 text-xs font-medium text-gray-700">
+                <label class="flex items-center gap-2 p-2 rounded-lg border border-gray-100 hover:bg-gray-50 cursor-pointer">
+                    <input type="radio" name="reportReason" checked class="accent-rose-600"> Harassment, judgment, or victim-blaming
+                </label>
+                <label class="flex items-center gap-2 p-2 rounded-lg border border-gray-100 hover:bg-gray-50 cursor-pointer">
+                    <input type="radio" name="reportReason" class="accent-rose-600"> Unconsented private data (Doxxing)
+                </label>
+                <label class="flex items-center gap-2 p-2 rounded-lg border border-gray-100 hover:bg-gray-50 cursor-pointer">
+                    <input type="radio" name="reportReason" class="accent-rose-600"> Spam, bot activity, or commercial links
+                </label>
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="closeReportModal()" class="px-3 py-2 text-xs font-semibold text-gray-600 hover:bg-gray-100 rounded-xl">Cancel</button>
+                <button onclick="submitReport()" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl shadow transition">Submit Report</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. GLOBAL CRISIS HELPLINES MODAL -->
+    <div id="helplineModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden border border-gray-100 max-h-[85vh] flex flex-col">
+            <div class="bg-rose-700 text-white p-5 flex items-center justify-between shrink-0">
+                <div class="flex items-center gap-2 font-bold text-lg">
+                    <i class="fa-solid fa-life-ring"></i> Global Crisis Support Resources
+                </div>
+                <button onclick="closeHelplineModal()" class="text-white/80 hover:text-white text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="p-6 space-y-4 overflow-y-auto text-xs leading-relaxed text-gray-700">
+                <div class="p-3.5 bg-rose-50 border border-rose-200 rounded-2xl text-rose-900 font-medium flex items-center gap-3">
+                    <span class="text-2xl">🚨</span>
+                    <div>
+                        <strong>Immediate Physical Emergency:</strong><br>
+                        If you are in immediate physical danger, please contact your local emergency services (e.g., 911 in North America, 112 in Europe, 999 in UK).
+                    </div>
+                </div>
+
+                <div class="space-y-3 pt-2">
+                    <h4 class="font-bold text-gray-900 text-sm border-b pb-1">Verified International Helplines:</h4>
+                    
+                    <div class="p-3.5 rounded-xl border border-gray-200 space-y-1">
+                        <div class="flex justify-between items-center font-bold text-sm text-gray-800">
+                            <span>Find A Helpline (Global Directory)</span>
+                            <a href="https://findahelpline.com" target="_blank" rel="noopener noreferrer" class="text-rose-600 underline">findahelpline.com</a>
+                        </div>
+                        <p class="text-gray-500">Free, confidential support in over 130 countries for crisis, domestic abuse, depression, and youth support.</p>
+                    </div>
+
+                    <div class="p-3.5 rounded-xl border border-gray-200 space-y-1">
+                        <div class="flex justify-between items-center font-bold text-sm text-gray-800">
+                            <span>Befrienders Worldwide</span>
+                            <a href="https://www.befrienders.org" target="_blank" rel="noopener noreferrer" class="text-rose-600 underline">befrienders.org</a>
+                        </div>
+                        <p class="text-gray-500">Global network offering confidential emotional support for anyone experiencing distress or despair.</p>
+                    </div>
+
+                    <div class="p-3.5 rounded-xl border border-gray-200 space-y-1">
+                        <div class="flex justify-between items-center font-bold text-sm text-gray-800">
+                            <span>988 Suicide & Crisis Lifeline</span>
+                            <span class="text-rose-600 font-bold">Call/Text 988</span>
+                        </div>
+                        <p class="text-gray-500">Free 24/7 crisis support available across the United States and Canada.</p>
+                    </div>
+
+                    <div class="p-3.5 rounded-xl border border-gray-200 space-y-1">
+                        <div class="flex justify-between items-center font-bold text-sm text-gray-800">
+                            <span>International Domestic Violence Hotlines</span>
+                            <a href="https://www.hotpeachpages.net" target="_blank" rel="noopener noreferrer" class="text-rose-600 underline">hotpeachpages.net</a>
+                        </div>
+                        <p class="text-gray-500">Comprehensive directory of domestic violence crisis lines in over 110 languages worldwide.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gray-50 p-4 text-center text-xs text-gray-500 border-t shrink-0">
+                SafeSpace is a peer support community and does not replace emergency or professional healthcare services.
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. TOAST NOTIFICATION CONTAINER -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- ==================== JAVASCRIPT LOGIC ==================== -->
+    <script>
+        // Sample Pre-populated Global English Stories
+        const INITIAL_STORIES = [
+            {
+                id: 'story-1',
+                title: 'It took me 3 years to realize emotional manipulation and isolation are real abuse.',
+                category: 'Abuse & Trauma',
+                author: 'Anonymous #318',
+                time: '2 hours ago',
+                isSensitive: true,
+                content: `At the beginning, it felt like a fairy tale. He told me he loved me so intensely that he wanted us to spend all our free time together. Slowly, subtle comments started when I wanted to visit my family or grab coffee with long-time friends. "They don't really care about your future like I do," he would say.
+
+Without even noticing, I had stopped texting my sister and was asking his permission for simple daily choices. Whenever I tried to express how suffocated I felt, he turned it around: "You're just being dramatic. I do everything for us."
+
+Classic gaslighting. I am sharing this for anyone feeling smaller every single day just to fit into someone else's life: that is not love. I finally gathered the strength to leave last month. It is hard, but breathing freely again is worth every step.`,
+                reactions: { empathetic: 42, strength: 58, gratitude: 29 },
+                userReactions: {},
+                comments: [
+                    { id: 'c1', author: 'QuietHope', time: '1 hour ago', text: 'Huge congratulations on taking your freedom back. The first step away is always the hardest. Sending you peace!' },
+                    { id: 'c2', author: 'Anonymous #904', time: '40 mins ago', text: 'Thank you for writing this. I felt like I was reading a mirror of my current situation. It gives me courage.' }
+                ]
+            },
+            {
+                id: 'story-2',
+                title: 'Living on autopilot and constantly afraid I am letting everyone down.',
+                category: 'Everyday Struggles',
+                author: 'Elena_W',
+                time: '5 hours ago',
+                isSensitive: false,
+                content: `I am 28 and for the past few months I wake up every morning with a tight knot in my chest. Work demands keep scaling up, my family expects me to be the cheerful caretaker, and inside I feel utterly depleted.
+
+Yesterday I broke down crying over a dropped coffee mug. I feel ashamed to talk to my friends because I don't want to be a burden when everyone has their own problems. Has anyone else experienced this deep burn-out? How did you find your way back to yourself?`,
+                reactions: { empathetic: 35, strength: 22, gratitude: 14 },
+                userReactions: {},
+                comments: [
+                    { id: 'c3', author: 'Marcus_P', time: '3 hours ago', text: 'Crying over the mug was just your nervous system letting out built-up pressure. Give yourself permission to rest without guilt today!' }
+                ]
+            },
+            {
+                id: 'story-3',
+                title: 'How do I establish boundaries with a toxic boss without risking my livelihood?',
+                category: 'Healing & Advice',
+                author: 'Anonymous #721',
+                time: '1 day ago',
+                isSensitive: false,
+                content: `I work in a small remote team of 6 people. My manager has developed a habit of making demoralizing "jokes" at my expense during weekly team video calls. If I don't laugh along, he claims I "have no sense of humor" and am being overly sensitive.
+
+I get severe anxiety on Sunday evenings knowing Monday morning is coming. Because I rely on this job to support my family, quitting immediately isn't an option. Has anyone successfully managed a situation like this?`,
+                reactions: { empathetic: 19, strength: 28, gratitude: 11 },
+                userReactions: {},
+                comments: []
+            }
+        ];
+
+        // State Management
+        let isMember = false;
+        let stories = [];
+        let currentCategory = 'all';
+        let currentTab = 'feed';
+        let activeReportStoryId = null;
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', () => {
+            loadState();
+            renderHeaderBadge();
+            renderSidebarCard();
+            renderStories();
+        });
+
+        function loadState() {
+            const savedMember = localStorage.getItem('safespace_isMember');
+            if (savedMember !== null) {
+                isMember = JSON.parse(savedMember);
+            }
+
+            const savedStories = localStorage.getItem('safespace_stories');
+            if (savedStories) {
+                stories = JSON.parse(savedStories);
+            } else {
+                stories = INITIAL_STORIES;
+                saveStories();
+            }
+        }
+
+        function saveStories() {
+            localStorage.setItem('safespace_stories', JSON.stringify(stories));
+        }
+
+        function setMemberState(val) {
+            isMember = val;
+            localStorage.setItem('safespace_isMember', JSON.stringify(isMember));
+            renderHeaderBadge();
+            renderSidebarCard();
+            renderStories();
+
+            const heroCallout = document.getElementById('heroVisitorCallout');
+            if (heroCallout) {
+                if (isMember) {
+                    heroCallout.classList.add('hidden');
+                } else {
+                    heroCallout.classList.remove('hidden');
+                }
+            }
+        }
+
+        function toggleUserRole() {
+            setMemberState(!isMember);
+            showToast(isMember ? "Switched to LIFETIME MEMBER Mode (All features unlocked)" : "Switched to VISITOR Mode (Preview restriction active)", "info");
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.getElementById('view-feed').classList.toggle('hidden', tab !== 'feed');
+            document.getElementById('view-rules').classList.toggle('hidden', tab !== 'rules');
+
+            const feedBtn = document.getElementById('navTab-feed');
+            const rulesBtn = document.getElementById('navTab-rules');
+
+            if (tab === 'feed') {
+                feedBtn.className = "hover:text-sage-700 transition pb-1 border-b-2 border-sage-600 text-sage-800 font-bold";
+                rulesBtn.className = "hover:text-sage-700 transition pb-1 border-b-2 border-transparent font-medium";
+            } else if (tab === 'rules') {
+                rulesBtn.className = "hover:text-sage-700 transition pb-1 border-b-2 border-sage-600 text-sage-800 font-bold";
+                feedBtn.className = "hover:text-sage-700 transition pb-1 border-b-2 border-transparent font-medium";
+            }
+        }
+
+        function renderHeaderBadge() {
+            const container = document.getElementById('statusBadgeContainer');
+            if (!container) return;
+
+            if (isMember) {
+                container.innerHTML = `
+                    <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold border border-emerald-200">
+                        <i class="fa-solid fa-circle-check text-emerald-600"></i> Lifetime Member
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <button onclick="openPaymentModal()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-100 hover:bg-amber-200 text-amber-900 text-xs font-bold border border-amber-300 transition">
+                        <i class="fa-solid fa-lock text-amber-700"></i> Visitor (€1 Unlock)
+                    </button>
+                `;
+            }
+        }
+
+        function renderSidebarCard() {
+            const card = document.getElementById('sidebarMembershipCard');
+            if (!card) return;
+
+            if (isMember) {
+                card.innerHTML = `
+                    <div class="flex items-center gap-2.5 text-sage-800 font-bold text-base">
+                        <div class="w-8 h-8 rounded-xl bg-sage-100 flex items-center justify-center text-sage-700">
+                            <i class="fa-solid fa-heart-circle-check"></i>
+                        </div>
+                        <h3>Lifetime Pass Active</h3>
+                    </div>
+                    <p class="text-xs text-gray-600 leading-relaxed">
+                        Thank you for being a part of our quiet global refuge. Your account is active forever—feel free to read, reply, and post whenever you need.
+                    </p>
+                    <div class="pt-1 text-[11px] text-sage-700 font-bold flex items-center gap-1.5">
+                        <i class="fa-solid fa-shield-halved"></i> Ad-Free & Protected
+                    </div>
+                `;
+            } else {
+                card.innerHTML = `
+                    <div class="flex items-center gap-2.5 text-sage-800 font-bold text-base">
+                        <div class="w-8 h-8 rounded-xl bg-sage-100 flex items-center justify-center text-sage-700">
+                            <i class="fa-solid fa-sparkles"></i>
+                        </div>
+                        <h3>Lifetime Pass — €1.00</h3>
+                    </div>
+                    <p class="text-xs text-gray-600 leading-relaxed">
+                        To maintain a quiet, compassionate space and keep out bots, trolls, and advertisers, we charge a single symbolic entry fee.
+                    </p>
+                    <ul class="text-xs text-gray-700 space-y-1.5 pt-1 font-medium">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-sage-600"></i> Read complete stories & replies</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-sage-600"></i> Share your story completely anonymously</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-sage-600"></i> No recurring subscription fees ever</li>
+                    </ul>
+                    <button onclick="openPaymentModal()" class="w-full mt-2 bg-sage-600 hover:bg-sage-700 text-white font-bold text-xs py-2.5 rounded-xl shadow transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-unlock"></i> Unlock Access (€1.00)
+                    </button>
+                `;
+            }
+        }
+
+        function filterCategory(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                btn.classList.remove('bg-sage-600', 'text-white');
+                btn.classList.add('bg-gray-100', 'text-gray-700');
+            });
+
+            const activeBtn = document.getElementById(`catBtn-${cat}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('bg-gray-100', 'text-gray-700');
+                activeBtn.classList.add('bg-sage-600', 'text-white');
+            }
+
+            renderStories();
+        }
+
+        function renderStories() {
+            const container = document.getElementById('storiesFeedContainer');
+            const searchVal = (document.getElementById('searchInput')?.value || '').toLowerCase();
+            if (!container) return;
+
+            let filtered = stories.filter(s => {
+                const matchesCat = currentCategory === 'all' || s.category === currentCategory;
+                const matchesSearch = s.title.toLowerCase().includes(searchVal) || s.content.toLowerCase().includes(searchVal);
+                return matchesCat && matchesSearch;
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white p-8 rounded-2xl border border-gray-200 text-center space-y-3">
+                        <div class="w-12 h-12 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center mx-auto text-xl">
+                            <i class="fa-solid fa-folder-open"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-700">No stories found</h4>
+                        <p class="text-xs text-gray-500">Try adjusting your search terms or category filter.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filtered.map(story => {
+                let contentHtml = '';
+
+                if (story.isSensitive && !story.revealedTW) {
+                    contentHtml = `
+                        <div class="bg-amber-50/90 border border-amber-200 p-4 rounded-xl text-center space-y-2 my-3">
+                            <div class="text-amber-800 text-xs font-bold flex items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-triangle-exclamation"></i> Content Warning (Sensitive Topic)
+                            </div>
+                            <p class="text-[11px] text-amber-700">This post discusses sensitive personal trauma or emotional abuse.</p>
+                            <button onclick="revealTW('${story.id}')" class="px-3 py-1.5 bg-amber-700 hover:bg-amber-800 text-white text-xs font-semibold rounded-lg transition">
+                                Click to Reveal Story
+                            </button>
+                        </div>
+                    `;
+                } else if (!isMember) {
+                    const previewText = story.content.substring(0, 140) + '...';
+                    contentHtml = `
+                        <div class="relative space-y-2 mt-2">
+                            <p class="text-sm text-gray-700 leading-relaxed">${previewText}</p>
+                            <div class="blur-preview text-sm text-gray-400 leading-relaxed select-none">
+                                I realized that I couldn't keep suffering in silence. Finding a space where people actually listen without judgment changed everything...
+                            </div>
+                            <div class="absolute inset-0 bg-gradient-to-b from-transparent via-white/80 to-white flex flex-col items-center justify-end pb-2 text-center">
+                                <div class="bg-white/95 border border-sage-200 shadow-md p-4 rounded-2xl max-w-sm w-full mx-auto space-y-1.5">
+                                    <div class="text-xs font-bold text-sage-800 flex items-center justify-center gap-1">
+                                        <i class="fa-solid fa-lock"></i> Protected Member Content
+                                    </div>
+                                    <p class="text-[11px] text-gray-500 leading-normal">Unlock full story reading, reactions, and supportive replies with €1 lifetime access.</p>
+                                    <button onclick="openPaymentModal()" class="w-full bg-sage-600 hover:bg-sage-700 text-white font-bold text-xs py-2 rounded-xl transition mt-1">
+                                        Unlock Lifetime Membership (€1)
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    contentHtml = `
+                        <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line mt-2">${story.content}</p>
+                    `;
+                }
+
+                const userReacted = story.userReactions || {};
+
+                return `
+                    <article class="bg-white p-5 sm:p-6 rounded-2xl border border-gray-200 shadow-sm space-y-4 hover:border-sage-200 transition">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="space-y-1">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-sage-50 text-sage-700 border border-sage-200">
+                                        ${story.category}
+                                    </span>
+                                    <span class="text-xs text-gray-400 font-medium">${story.time}</span>
+                                </div>
+                                <h3 class="text-base sm:text-lg font-bold text-gray-900 leading-snug">${story.title}</h3>
+                            </div>
+                            <span class="text-xs font-semibold text-gray-500 bg-gray-100 px-2.5 py-1 rounded-lg shrink-0">
+                                <i class="fa-solid fa-user-shield text-sage-600 mr-1"></i> ${story.author}
+                            </span>
+                        </div>
+
+                        ${contentHtml}
+
+                        <div class="pt-3 border-t border-gray-100 flex flex-wrap items-center justify-between gap-3">
+                            <div class="flex items-center gap-1.5 flex-wrap text-xs">
+                                <button onclick="reactToStory('${story.id}', 'empathetic')" 
+                                    class="px-3 py-1.5 rounded-xl border ${userReacted.empathetic ? 'bg-sage-100 border-sage-400 text-sage-800' : 'border-gray-200 hover:bg-gray-50 text-gray-700'} transition flex items-center gap-1.5 font-medium">
+                                    <span>🫂 I hear you</span>
+                                    <span class="font-bold">${story.reactions.empathetic || 0}</span>
+                                </button>
+                                <button onclick="reactToStory('${story.id}', 'strength')" 
+                                    class="px-3 py-1.5 rounded-xl border ${userReacted.strength ? 'bg-sage-100 border-sage-400 text-sage-800' : 'border-gray-200 hover:bg-gray-50 text-gray-700'} transition flex items-center gap-1.5 font-medium">
+                                    <span>💪 Sending strength</span>
+                                    <span class="font-bold">${story.reactions.strength || 0}</span>
+                                </button>
+                                <button onclick="reactToStory('${story.id}', 'gratitude')" 
+                                    class="px-3 py-1.5 rounded-xl border ${userReacted.gratitude ? 'bg-sage-100 border-sage-400 text-sage-800' : 'border-gray-200 hover:bg-gray-50 text-gray-700'} transition flex items-center gap-1.5 font-medium">
+                                    <span>❤️ Thank you for sharing</span>
+                                    <span class="font-bold">${story.reactions.gratitude || 0}</span>
+                                </button>
+                            </div>
+
+                            <div class="flex items-center gap-3 text-xs">
+                                <button onclick="toggleComments('${story.id}')" class="text-sage-700 hover:text-sage-800 font-bold flex items-center gap-1.5">
+                                    <i class="fa-regular fa-comment-dots"></i> Replies (${story.comments ? story.comments.length : 0})
+                                </button>
+                                <button onclick="openReportModal('${story.id}')" class="text-gray-400 hover:text-rose-500 transition" title="Report Post">
+                                    <i class="fa-regular fa-flag"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="commentsSection-${story.id}" class="hidden pt-3 border-t border-gray-100 space-y-3 bg-gray-50/70 p-4 rounded-xl">
+                            <h4 class="text-xs font-bold text-gray-700 flex items-center gap-1.5">
+                                <i class="fa-solid fa-comments text-sage-600"></i> Supportive Community Replies
+                            </h4>
+
+                            <div class="space-y-2.5">
+                                ${(!story.comments || story.comments.length === 0) 
+                                    ? `<p class="text-xs text-gray-400 italic">No replies yet. Be the first to send a comforting message!</p>`
+                                    : story.comments.map(c => `
+                                        <div class="bg-white p-3 rounded-xl border border-gray-200 space-y-1 text-xs">
+                                            <div class="flex justify-between items-center text-gray-500 font-medium">
+                                                <span class="font-bold text-sage-800"><i class="fa-solid fa-circle-user mr-1"></i> ${c.author}</span>
+                                                <span class="text-[10px]">${c.time}</span>
+                                            </div>
+                                            <p class="text-gray-700 leading-relaxed">${c.text}</p>
+                                        </div>
+                                    `).join('')
+                                }
+                            </div>
+
+                            ${isMember ? `
+                                <form onsubmit="handleAddComment(event, '${story.id}')" class="pt-2 space-y-2">
+                                    <textarea required rows="2" placeholder="Write a gentle, supportive reply..." 
+                                        class="w-full text-xs p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-sage-500 focus:outline-none bg-white leading-relaxed"></textarea>
+                                    <div class="flex items-center justify-between">
+                                        <label class="text-[11px] text-gray-500 flex items-center gap-1 cursor-pointer">
+                                            <input type="checkbox" id="commentAnonCheck-${story.id}" checked class="accent-sage-600 rounded">
+                                            Post anonymously
+                                        </label>
+                                        <button type="submit" class="px-4 py-2 bg-sage-600 hover:bg-sage-700 text-white font-bold text-xs rounded-xl transition shadow-sm">
+                                            Send Reply
+                                        </button>
+                                    </div>
+                                </form>
+                            ` : `
+                                <div class="bg-white p-3.5 rounded-xl border border-sage-200 text-center space-y-1">
+                                    <p class="text-xs text-gray-600">Want to offer solace to this author?</p>
+                                    <button onclick="openPaymentModal()" class="text-xs text-sage-700 font-bold hover:underline">
+                                        Unlock lifetime access (€1.00) to reply →
+                                    </button>
+                                </div>
+                            `}
+                        </div>
+                    </article>
+                `;
+            }).join('');
+        }
+
+        function revealTW(storyId) {
+            const story = stories.find(s => s.id === storyId);
+            if (story) {
+                story.revealedTW = true;
+                renderStories();
+            }
+        }
+
+        function reactToStory(storyId, type) {
+            if (!isMember) {
+                openPaymentModal();
+                showToast("Unlock membership (€1) to send supportive reactions.", "info");
+                return;
+            }
+
+            const story = stories.find(s => s.id === storyId);
+            if (!story) return;
+
+            if (!story.userReactions) story.userReactions = {};
+            if (!story.reactions) story.reactions = { empathetic: 0, strength: 0, gratitude: 0 };
+
+            if (story.userReactions[type]) {
+                story.reactions[type]--;
+                story.userReactions[type] = false;
+            } else {
+                story.reactions[type] = (story.reactions[type] || 0) + 1;
+                story.userReactions[type] = true;
+            }
+
+            saveStories();
+            renderStories();
+        }
+
+        function toggleComments(storyId) {
+            const sec = document.getElementById(`commentsSection-${storyId}`);
+            if (sec) sec.classList.toggle('hidden');
+        }
+
+        function handleAddComment(e, storyId) {
+            e.preventDefault();
+            const form = e.target;
+            const textarea = form.querySelector('textarea');
+            const isAnon = form.querySelector(`#commentAnonCheck-${storyId}`)?.checked;
+            
+            const text = textarea.value.trim();
+            if (!text) return;
+
+            const story = stories.find(s => s.id === storyId);
+            if (story) {
+                if (!story.comments) story.comments = [];
+                const randomId = Math.floor(100 + Math.random() * 900);
+                story.comments.push({
+                    id: 'c-' + Date.now(),
+                    author: isAnon ? `Anonymous #${randomId}` : 'SafeSpace Member',
+                    time: 'Just now',
+                    text: text
+                });
+                saveStories();
+                renderStories();
+                showToast("Your supportive reply has been shared.", "success");
+            }
+        }
+
+        function handleCreateStoryClick() {
+            if (!isMember) {
+                openPaymentModal();
+                showToast("Please unlock lifetime access (€1.00) to publish a story.", "info");
+            } else {
+                openCreateStoryModal();
+            }
+        }
+
+        function handleStorySubmit(e) {
+            e.preventDefault();
+            const title = document.getElementById('storyTitle').value.trim();
+            const category = document.getElementById('storyCategory').value;
+            const content = document.getElementById('storyContent').value.trim();
+            const isSensitive = document.getElementById('storyTW').checked;
+
+            const authorOption = document.querySelector('input[name="authorOption"]:checked').value;
+            let authorName = 'Anonymous #' + Math.floor(100 + Math.random() * 900);
+
+            if (authorOption === 'pseudonym') {
+                const customPseudonym = document.getElementById('storyPseudonym').value.trim();
+                if (customPseudonym) authorName = customPseudonym;
+            }
+
+            const newStory = {
+                id: 'story-' + Date.now(),
+                title: title,
+                category: category,
+                author: authorName,
+                time: 'Just now',
+                isSensitive: isSensitive,
+                content: content,
+                reactions: { empathetic: 1, strength: 1, gratitude: 1 },
+                userReactions: { empathetic: true },
+                comments: []
+            };
+
+            stories.unshift(newStory);
+            saveStories();
+            closeCreateStoryModal();
+            renderStories();
+            showToast("Your story has been safely published.", "success");
+            document.getElementById('storyForm').reset();
+        }
+
+        function toggleAuthorInput() {
+            const authorOption = document.querySelector('input[name="authorOption"]:checked').value;
+            const container = document.getElementById('pseudonymInputContainer');
+            if (authorOption === 'pseudonym') {
+                container.classList.remove('hidden');
+            } else {
+                container.classList.add('hidden');
+            }
+        }
+
+        function processPayment(e) {
+            e.preventDefault();
+            const btn = document.getElementById('paySubmitBtn');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Processing €1.00 Payment...`;
+
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.innerHTML = `<span>Pay €1.00 & Unlock Lifetime Membership</span>`;
+                closePaymentModal();
+                setMemberState(true);
+                showToast("🎉 Payment confirmed! Welcome to SafeSpace.", "success");
+            }, 1200);
+        }
+
+        function openReportModal(storyId) {
+            activeReportStoryId = storyId;
+            document.getElementById('reportModal').classList.remove('hidden');
+        }
+        function closeReportModal() {
+            document.getElementById('reportModal').classList.add('hidden');
+            activeReportStoryId = null;
+        }
+        function submitReport() {
+            closeReportModal();
+            showToast("Report submitted to our moderation team. Thank you for keeping us safe.", "success");
+        }
+
+        function openPaymentModal() { document.getElementById('paymentModal').classList.remove('hidden'); }
+        function closePaymentModal() { document.getElementById('paymentModal').classList.add('hidden'); }
+
+        function openCreateStoryModal() { document.getElementById('createStoryModal').classList.remove('hidden'); }
+        function closeCreateStoryModal() { document.getElementById('createStoryModal').classList.add('hidden'); }
+
+        function openHelplineModal() { document.getElementById('helplineModal').classList.remove('hidden'); }
+        function closeHelplineModal() { document.getElementById('helplineModal').classList.add('hidden'); }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+
+            const toast = document.createElement('div');
+            toast.className = `pointer-events-auto flex items-center gap-2.5 px-4 py-3 rounded-2xl shadow-xl text-xs font-semibold border text-white transition-all transform duration-300 translate-y-2 bg-sage-800 border-sage-700`;
+
+            if (type === 'success') {
+                toast.className = `pointer-events-auto flex items-center gap-2.5 px-4 py-3 rounded-2xl shadow-xl text-xs font-semibold border text-white transition-all transform duration-300 translate-y-2 bg-emerald-700 border-emerald-600`;
+            } else if (type === 'error') {
+                toast.className = `pointer-events-auto flex items-center gap-2.5 px-4 py-3 rounded-2xl shadow-xl text-xs font-semibold border text-white transition-all transform duration-300 translate-y-2 bg-rose-700 border-rose-600`;
+            }
+
+            toast.innerHTML = `
+                <i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-circle-info'} text-sm"></i>
+                <span>${message}</span>
+            `;
+
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.remove('translate-y-2'), 10);
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+    </script>
+</body>
+</html>
